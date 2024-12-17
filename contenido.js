@@ -21,7 +21,7 @@ const Contenido = {
     {k:"h1", text:"Herramientas"}
   ],
   "Herramientas_Shiny":[
-    {k:"h2", text:"Recursos en Shiny"},
+    {k:"h2", text:"ReQrsos en Shiny"},
     {k:"frame", title:"Sucesiones, funciones lineales y límites", url:"https://pruebas-reda.shinyapps.io/pruebas_analisis/",
       desc:"Algunos ejercicios de análisis matemático."}
   ],
