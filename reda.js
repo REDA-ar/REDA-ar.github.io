@@ -7,6 +7,7 @@ function inicializar() {
   main.setAttribute("id", "main");
   main.classList.add("main");
   body.appendChild(main);
+  Vista.main = main;
 
   const topMenu = document.createElement('div');
   topMenu.setAttribute("id", "topMenu");
@@ -17,6 +18,7 @@ function inicializar() {
   mainTopMenuButton.setAttribute("id", "mainTopMenuButton");
   mainTopMenuButton.classList.add("topMenuButton");
   mainTopMenuButton.classList.add("clickeable");
+  mainTopMenuButton.addEventListener('click', mostrarSeccionHandler("MAIN"));
   topMenu.appendChild(mainTopMenuButton);
 
   const topMenuButtonImg = document.createElement('img');
@@ -41,11 +43,14 @@ function inicializar() {
   ];
   addButtons(topMenuButtonsBar, topMenuButtons, "V");
   topMenu.appendChild(topMenuButtonsBar);
+  let seccionActual = parametroURL("s") || "MAIN";
+  mostrarSeccion(seccionActual);
 };
 
 function addButtons(container, buttons, dir="H") {
   for (let tmb of buttons) {
     let button = document.createElement('a');
+    let idSection = 'idSection' in tmb ? tmb.idSection : tmb.text;
     button.setAttribute("id", `topMenuButton_${tmb.text}`);
     button.classList.add("topMenuButton");
     button.classList.add("textTopMenuButton");
@@ -53,7 +58,11 @@ function addButtons(container, buttons, dir="H") {
     button.innerHTML = tmb.text;
     button.parentContainer = container;
     container.appendChild(button);
+    button.addEventListener('click', mostrarSeccionHandler(idSection));
     if ('sub' in tmb) {
+      for (let sub of tmb.sub) {
+        sub.idSection = idSection + '_' + sub.text;
+      }
       button.addEventListener('mouseenter', subSectionHandlerEnter(button, tmb.sub, dir));
       button.addEventListener('mouseleave', subSectionHandlerLeave(button));
     }
@@ -153,7 +162,7 @@ function ocultarMenu(menu, b) {
   }
   menu.style['animation-name'] = 'dissappear';
   setTimeout(function() {
-    if (!(cursor.stack.includes(menu) || cursor.stack.includes(b))) {
+    if (!(cursor.stack.includes(menu) || (b !== null && cursor.stack.includes(b)))) {
       menu.style.display = 'none';
       for (let c of parents) {
         c.style.display = 'none';
@@ -161,6 +170,106 @@ function ocultarMenu(menu, b) {
       cursor.pendientes = newPendientes;
     }
   }, 500);
+};
+
+function mostrarSeccionHandler(clave) {
+  return function(e) {
+    for (let m of cursor.pendientes.concat(cursor.stack)) {
+      if (m.id.endsWith("_sub")) {
+        m.style.display = 'none';
+      }
+    }
+    cursor.pendientes = [];
+    cursor.stack = [];
+    mostrarSeccion(clave);
+  }
+};
+
+const Vista = {};
+
+function mostrarSeccion(clave) {
+  let id = `seccion_${clave}_div`;
+  let div = document.getElementById(id);
+  if (div === null) {
+    div = document.createElement('div');
+    div.setAttribute('id', id);
+    div.classList.add('seccion');
+    Vista.main.appendChild(div);
+    let contenido = Contenido[clave] || [];
+    armarContenido(div, contenido);
+  }
+  if ('activa' in Vista) {
+    ocultarSeccion(Vista.activa);
+  }
+  div.style.display = 'block';
+  Vista.activa = clave;
+  actualizarURL(clave);
+};
+
+function ocultarSeccion(clave) {
+  let id = `seccion_${clave}_div`;
+  let div = document.getElementById(id);
+  if (div !== null) {
+    div.style.display = 'none';
+  }
+};
+
+function armarContenido(div, contenido) {
+  for (let data of contenido) {
+    let e;
+    if (data.k === "frame") {
+      e = armarFrame(data);
+    } else {
+      e = document.createElement(data.k);
+      if ('text' in data) {
+        e.innerHTML = data.text;
+      }
+    }
+    div.appendChild(e);
+  }
+};
+
+function armarFrame(data) {
+  let e = document.createElement('div');
+  e.classList.add('frame_div');
+  if ('title' in data) {
+    let t = document.createElement('h3');
+    t.innerHTML = data.title;
+    e.appendChild(t);
+  }
+  if ('desc' in data) {
+    let d = document.createElement('p');
+    d.innerHTML = data.desc;
+    e.appendChild(d);
+  }
+  if ('url' in data) {
+    let f = document.createElement('iframe');
+    e.appendChild(armarBotonFrame(f, data.url));
+    let b = document.createElement('button');
+    b.innerHTML = 'abrir';
+    b.addEventListener('click', function(e) {open(data.url);})
+    e.appendChild(b);
+    f.style.display = 'none';
+    e.appendChild(f);
+  }
+  return e;
+};
+
+function armarBotonFrame(f, url) {
+  let b = document.createElement('button');
+  b.innerHTML = 'mostrar';
+  b.addEventListener('click', function(e) {
+    if (f.style.display === 'none') {
+      let src = f.getAttribute('src');
+      if (src === null) {
+        f.setAttribute('src', url);
+      }
+      f.style.display = 'block';
+    } else {
+      f.style.display = 'none';
+    }
+  });
+  return b;
 };
 
 Array.prototype.last = function() {
@@ -176,5 +285,23 @@ Array.prototype.remove = function(e) {
 Array.prototype.pushSiNoEsta = function(e) {
   if (!this.includes(e)) {
     this.push(e);
+  }
+};
+
+const parametroURL = function(clave) {
+  let url = location.href;
+  clave = clave.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");
+  var regexS = "[\\?&]"+clave+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( url );
+  return results == null ? null : results[1];
+};
+
+const actualizarURL = function(clave) {
+  let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?s=${clave}`;
+  if (history.pushState) {
+    window.history.pushState({path:newurl},'',newurl);
+  } else {
+    window.history.replaceState({path:newurl},'',newurl);
   }
 };
