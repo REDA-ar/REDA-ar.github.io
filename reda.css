@@ -140,3 +140,34 @@ iframe {
   width: -webkit-fill-available;
   height: 100%;
 }
+
+.xmlView {
+  padding: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #888;
+}
+
+.pregunta {
+  padding: 10px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #444;
+}
+
+.respuesta {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
+.devolucion {
+  margin-left: 5px;
+}
+
+.campo_devolucion {
+  margin: 5px;
+  padding: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #444;
+}

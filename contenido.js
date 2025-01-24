@@ -42,8 +42,27 @@ const Contenido = {
   "Cursos":[
     {k:"h1", text:"Cursos"}
   ],
-  "Cursos_Exactas Programa 2025":[
-    {k:"h2", text:"Exactas Programa 2025"}
+  "Cursos_Exactas Programa Invierno 2023":[
+    {k:"h2", text:"Exactas Programa Invierno 2023"},
+    {k:"frame", title:"Cuestionario: Asignaciones y Listas", xml:"moodle/EP2023_AsignacionesYListas.xml"},
+    {k:"frame", title:"Cuestionario: Listas y Figus", xml:"moodle/EP2023_ListasYFigus.xml"},
+    {k:"frame", title:"Cuestionario: Funciones", xml:"moodle/EP2023_Funciones.xml"},
+    {k:"frame", title:"Cuestionario: Ciclos y Condiciones", xml:"moodle/EP2023_CiclosYCondiciones.xml"},
+    {k:"frame", title:"Cuestionario: Ciclos y Figus", xml:"moodle/EP2023_CiclosYFigus.xml"},
+    {k:"frame", title:"Cuestionario: Más Funciones", xml:"moodle/EP2023_MasFunciones.xml"},
+    {k:"frame", title:"Cuestionario: Operadores lógicos", xml:"moodle/EP2023_OperadoresLogicos.xml"}
+  ],
+  "Cursos_Taller de Programación 1C 2023":[
+    {k:"h2", text:"Taller de Programación - Primer Cuatrimestre de 2023"},
+    {k:"frame", title:"Cuestionario: Asignaciones y Listas", xml:"moodle/TP2023_AsignacionesYListas.xml"},
+    {k:"frame", title:"Cuestionario: Listas y Figus", xml:"moodle/TP2023_ListasYFigus.xml"},
+    {k:"frame", title:"Cuestionario: Funciones", xml:"moodle/TP2023_Funciones.xml"},
+    {k:"frame", title:"Cuestionario: Ciclos y Condiciones", xml:"moodle/TP2023_CiclosYCondiciones.xml"},
+    {k:"frame", title:"Cuestionario: Operadores Lógicos", xml:"moodle/TP2023_OperadoresLogicos.xml"},
+    {k:"frame", title:"Cuestionario: Más Funciones", xml:"moodle/TP2023_MasFunciones.xml"},
+    {k:"frame", title:"Cuestionario: Ciclos", xml:"moodle/TP2023_Ciclos.xml"},
+    {k:"frame", title:"Cuestionario: Corrigiendo código", xml:"moodle/TP2023_CorrigiendoCodigo.xml"},
+    {k:"frame", title:"Cuestionario: Más Funciones EP", xml:"moodle/TP2023_MasFuncionesEP.xml"}
   ],
   "Contacto":[
     {k:"h2", text:"Contacto"}

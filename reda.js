@@ -38,7 +38,10 @@ function inicializar() {
       {text:"Python"}
     ]},
     {text:"Herramientas", sub:[{text:"Shiny"}, {text:"Moodle"}, {text:"Blockly"}]},
-    {text:"Cursos", sub:[{text:"Exactas Programa 2025"}]},
+    {text:"Cursos", sub:[
+      {text:"Exactas Programa Invierno 2023"},
+      {text:"Taller de Programación 1C 2023"}
+    ]},
     {text:"Contacto"}
   ];
   addButtons(topMenuButtonsBar, topMenuButtons, "V");
@@ -244,10 +247,20 @@ function armarFrame(data) {
   }
   if ('url' in data) {
     let f = document.createElement('iframe');
-    e.appendChild(armarBotonFrame(f, data.url));
+    e.appendChild(armarBotonFrameUrl(f, data.url));
     let b = document.createElement('button');
     b.innerHTML = 'abrir';
     b.addEventListener('click', function(e) {open(data.url);})
+    e.appendChild(b);
+    f.style.display = 'none';
+    e.appendChild(f);
+  } else if ('xml' in data) {
+    let f = document.createElement('div');
+    f.classList.add('xmlView');
+    e.appendChild(armarBotonFrameXml(f, data.xml));
+    let b = document.createElement('button');
+    b.innerHTML = 'descargar';
+    b.addEventListener('click', function(e) {open(data.xml);})
     e.appendChild(b);
     f.style.display = 'none';
     e.appendChild(f);
@@ -255,7 +268,7 @@ function armarFrame(data) {
   return e;
 };
 
-function armarBotonFrame(f, url) {
+function armarBotonFrameUrl(f, url) {
   let b = document.createElement('button');
   b.innerHTML = 'mostrar';
   b.addEventListener('click', function(e) {
@@ -270,6 +283,161 @@ function armarBotonFrame(f, url) {
     }
   });
   return b;
+};
+
+function armarBotonFrameXml(f, ruta) {
+  let b = document.createElement('button');
+  b.innerHTML = 'mostrar';
+  b.addEventListener('click', function(e) {
+    if (f.style.display === 'none') {
+      if (!f.hasChildNodes()) {
+        cargarXML(f, ruta);
+      }
+      f.style.display = 'block';
+    } else {
+      f.style.display = 'none';
+    }
+  });
+  return b;
+};
+
+function cargarXML(e, ruta) {
+  let xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      e.appendChild(mostrarXML(this.responseXML));
+    }
+  };
+  xhttp.open("GET", ruta, true);
+  xhttp.send();
+};
+
+let contadorGlobal = 0;
+function idUnico() {
+  contadorGlobal++;
+  return contadorGlobal;
+};
+
+const tmpStack = [];
+
+function mostrarXML(xml) {
+  let div, texto, i;
+  switch (xml.nodeName) {
+    case '#document':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
+    case 'activity':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
+    case 'lesson':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
+    case 'name':
+      div = document.createElement('h3');
+      div.innerHTML = limpiar(xml.innerHTML);
+      return div;
+    case 'pages':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
+    case 'page':
+      div = document.createElement('div');
+      div.classList.add('pregunta');
+      tmpStack.push({respuestas:[]});
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      dataPregunta = tmpStack.pop();
+      if (dataPregunta.tipo == '20') { // Es sólo un texto de introducción
+
+      } else if (dataPregunta.tipo == '2' || dataPregunta.tipo == '3') { // Opción múltiple
+        i = idUnico();
+        for (let r of dataPregunta.respuestas) {
+          let j = idUnico();
+          let b = document.createElement('button');
+          b.innerHTML = r.respuesta;
+          b.setAttribute('onclick', `mostrarDevolucion(${i}, ${j})`);
+          div.appendChild(b);
+          let d = document.createElement('p');
+          d.setAttribute('id', `elemento_${j}`);
+          d.innerHTML = r.devolucion;
+          d.style.display = 'none';
+          div.appendChild(d);
+        }
+        let devolucion = document.createElement('div');
+        devolucion.setAttribute('id', `elemento_${i}`);
+        devolucion.classList.add('campo_devolucion');
+        div.appendChild(devolucion);
+      } else {
+        debugger;
+      }
+      return div;
+    case 'qtype':
+      div = document.createElement('dov');
+      div.style.display = 'none';
+      tmpStack.last().tipo = xml.innerHTML;
+      return div;
+    case 'title':
+      div = document.createElement('h4');
+      div.innerHTML = limpiar(xml.innerHTML);
+      return div;
+    case 'contents':
+      div = document.createElement('div');
+      div.innerHTML = limpiar(xml.innerHTML);
+      return div;
+    case 'answers':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
+    case 'answer':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
+    case 'answer_text':
+      div = document.createElement('div');
+      div.classList.add('respuesta');
+      texto = limpiar(xml.innerHTML);
+      div.innerHTML = `<b>Respuesta</b>: ${texto}`;
+      div.style.display = 'none';
+      tmpStack.last().respuestas.push({'respuesta':texto});
+      return div;
+    case 'response':
+      div = document.createElement('div');
+      div.classList.add('devolucion');
+      texto = limpiar(xml.innerHTML);
+      div.innerHTML = `<b>Devolución</b>: ${texto}`;
+      div.style.display = 'none';
+      tmpStack.last().respuestas.last().devolucion = texto;
+      return div;
+  }
+  div = document.createElement('div');
+  div.innerHTML = `Nodo desconocido: ${xml.nodeName}`;
+  div.style.display = 'none';
+  return div;
+};
+
+function limpiar(s) {
+  return s.replaceAll('&lt;','<').replaceAll('&gt;','>');
+};
+
+function mostrarDevolucion(i_salida, i_texto) {
+  document.getElementById(`elemento_${i_salida}`).innerHTML =
+    document.getElementById(`elemento_${i_texto}`).innerHTML;
 };
 
 Array.prototype.last = function() {
