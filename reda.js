@@ -462,7 +462,20 @@ const parametroURL = function(clave) {
   var regexS = "[\\?&]"+clave+"=([^&#]*)";
   var regex = new RegExp( regexS );
   var results = regex.exec( url );
-  return results == null ? null : results[1];
+  return results == null ? null :
+    results[1].replaceAll("%20", ' ')
+      .replaceAll("%C3%A1", 'á')
+      .replaceAll("%C3%A9", 'é')
+      .replaceAll("%C3%AD", 'í')
+      .replaceAll("%C3%B3", 'ó')
+      .replaceAll("%C3%BA", 'ú')
+      .replaceAll("%C3%81", 'Á')
+      .replaceAll("%C3%89", 'É')
+      .replaceAll("%C3%8D", 'Í')
+      .replaceAll("%C3%93", 'Ó')
+      .replaceAll("%C3%9A", 'Ú')
+      .replaceAll("%C3%91", 'Ñ')
+      .replaceAll("%C3%B1", 'ñ');
 };
 
 const actualizarURL = function(clave) {
