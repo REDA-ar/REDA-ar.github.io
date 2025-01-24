@@ -118,6 +118,7 @@ body {
   border-style: solid;
   border-color: #0082;
   border-radius: 15px;
+  height: -moz-fill-available;
   height: -webkit-fill-available;
   overflow: auto;
   background-color: #fff;
@@ -137,6 +138,7 @@ h1 {
 }
 
 iframe {
+  width: -moz-fill-available;
   width: -webkit-fill-available;
   height: 100%;
 }
