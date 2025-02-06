@@ -1,5 +1,7 @@
 window.addEventListener('load', inicializar);
 
+const urlMoodle = "https://reda-ar.github.io/campus/";
+
 function inicializar() {
   const body = document.body;
 
@@ -258,10 +260,14 @@ function armarFrame(data) {
     let f = document.createElement('div');
     f.classList.add('xmlView');
     e.appendChild(armarBotonFrameXml(f, data.xml));
-    let b = document.createElement('button');
-    b.innerHTML = 'descargar';
-    b.addEventListener('click', function(e) {open(data.xml);})
-    e.appendChild(b);
+    // let bd = document.createElement('button');
+    // bd.innerHTML = 'descargar';
+    // bd.addEventListener('click', function(e) {open(data.xml);})
+    // e.appendChild(bd);
+    let br = document.createElement('button');
+    br.innerHTML = 'responder este cuestionario';
+    br.addEventListener('click', function(e) {open(`${urlMoodle}?q=${data.xml}`);})
+    e.appendChild(br);
     f.style.display = 'none';
     e.appendChild(f);
   }
@@ -287,7 +293,7 @@ function armarBotonFrameUrl(f, url) {
 
 function armarBotonFrameXml(f, ruta) {
   let b = document.createElement('button');
-  b.innerHTML = 'mostrar';
+  b.innerHTML = 'vista previa';
   b.addEventListener('click', function(e) {
     if (f.style.display === 'none') {
       if (!f.hasChildNodes()) {
@@ -362,29 +368,29 @@ function mostrarXML(xml) {
       if (dataPregunta.tipo == '20') { // Es sólo un texto de introducción
 
       } else if (dataPregunta.tipo == '2' || dataPregunta.tipo == '3') { // Opción múltiple
-        i = idUnico();
-        for (let r of dataPregunta.respuestas) {
-          let j = idUnico();
-          let b = document.createElement('button');
-          b.innerHTML = r.respuesta;
-          b.setAttribute('onclick', `mostrarDevolucion(${i}, ${j})`);
-          div.appendChild(b);
-          let d = document.createElement('p');
-          d.setAttribute('id', `elemento_${j}`);
-          d.innerHTML = r.devolucion;
-          d.style.display = 'none';
-          div.appendChild(d);
-        }
-        let devolucion = document.createElement('div');
-        devolucion.setAttribute('id', `elemento_${i}`);
-        devolucion.classList.add('campo_devolucion');
-        div.appendChild(devolucion);
+        // i = idUnico();
+        // for (let r of dataPregunta.respuestas) {
+        //   let j = idUnico();
+        //   let b = document.createElement('button');
+        //   b.innerHTML = r.respuesta;
+        //   b.setAttribute('onclick', `mostrarDevolucion(${i}, ${j})`);
+        //   div.appendChild(b);
+        //   let d = document.createElement('p');
+        //   d.setAttribute('id', `elemento_${j}`);
+        //   d.innerHTML = r.devolucion;
+        //   d.style.display = 'none';
+        //   div.appendChild(d);
+        // }
+        // let devolucion = document.createElement('div');
+        // devolucion.setAttribute('id', `elemento_${i}`);
+        // devolucion.classList.add('campo_devolucion');
+        // div.appendChild(devolucion);
       } else {
         debugger;
       }
       return div;
     case 'qtype':
-      div = document.createElement('dov');
+      div = document.createElement('div');
       div.style.display = 'none';
       tmpStack.last().tipo = xml.innerHTML;
       return div;
