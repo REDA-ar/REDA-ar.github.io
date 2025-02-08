@@ -1,6 +1,7 @@
 window.addEventListener('load', inicializar);
 
 const urlMoodle = "https://reda-ar.github.io/campus/";
+const urlServidor = "https://epli.exp.dc.uba.ar"
 
 function inicializar() {
   const body = document.body;
@@ -256,6 +257,16 @@ function armarFrame(data) {
     e.appendChild(b);
     f.style.display = 'none';
     e.appendChild(f);
+  } else if ('cuestionario' in data) {
+    let f = document.createElement('div');
+    f.classList.add('xmlView');
+    e.appendChild(armarBotonFrameCuestionario(f, data.cuestionario));
+    let br = document.createElement('button');
+    br.innerHTML = 'responder este cuestionario';
+    br.addEventListener('click', function(e) {open(`${urlMoodle}?curso=${data.cuestionario.curso}&ej=${data.cuestionario.ej}`);});
+    e.appendChild(br);
+    f.style.display = 'none';
+    e.appendChild(f);
   } else if ('xml' in data) {
     let f = document.createElement('div');
     f.classList.add('xmlView');
@@ -266,7 +277,7 @@ function armarFrame(data) {
     // e.appendChild(bd);
     let br = document.createElement('button');
     br.innerHTML = 'responder este cuestionario';
-    br.addEventListener('click', function(e) {open(`${urlMoodle}?q=${data.xml}`);})
+    // br.addEventListener('click', function(e) { ? });
     e.appendChild(br);
     f.style.display = 'none';
     e.appendChild(f);
@@ -291,6 +302,22 @@ function armarBotonFrameUrl(f, url) {
   return b;
 };
 
+function armarBotonFrameCuestionario(f, cuestionario) {
+  let b = document.createElement('button');
+  b.innerHTML = 'vista previa';
+  b.addEventListener('click', function(e) {
+    if (f.style.display === 'none') {
+      if (!f.hasChildNodes()) {
+        cargarCuestionario(f, cuestionario);
+      }
+      f.style.display = 'block';
+    } else {
+      f.style.display = 'none';
+    }
+  });
+  return b;
+};
+
 function armarBotonFrameXml(f, ruta) {
   let b = document.createElement('button');
   b.innerHTML = 'vista previa';
@@ -305,6 +332,67 @@ function armarBotonFrameXml(f, ruta) {
     }
   });
   return b;
+};
+
+function cargarCuestionario(e, cuestionario) {
+  let xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      e.appendChild(mostrarCuestionario(this.responseText));
+    }
+  };
+  xhttp.open("GET", `${urlServidor}/cuestionario/${cuestionario.curso}/${cuestionario.ej}`, true);
+  xhttp.send();
+};
+
+function mostrarCuestionario(texto) {
+  let respuesta = JSON.parse(texto);
+  if ("resultado" in respuesta) {
+    if (respuesta.resultado == "OK" && "cuestionario" in respuesta) {
+      let cuestionario = respuesta.cuestionario;
+      let div = document.createElement('div');
+      if ("nombre" in cuestionario) {
+        div.appendChild(dom("h3", cuestionario.nombre));
+      }
+      if ("preguntas" in cuestionario) {
+        div.appendChild(divPreguntas(cuestionario.preguntas));
+      }
+      return div;
+    }
+    return divFalla(respuesta);
+  }
+  return divFalla(respuesta);
+};
+
+function divPreguntas(preguntas) {
+  let div = document.createElement('div');
+  for (let pregunta of preguntas) {
+    div.appendChild(divPregunta(pregunta));
+  }
+  return div;
+};
+
+function divPregunta(pregunta) {
+  let div = document.createElement('div');
+  div.classList.add('pregunta');
+  if ("titulo" in pregunta) {
+    div.appendChild(dom("h4", pregunta.titulo));
+  }
+  if ("pregunta" in pregunta) {
+    div.appendChild(dom("div", pregunta.pregunta));
+  }
+  return div;
+};
+
+function dom(clase, contenido) {
+  let elemento = document.createElement(clase);
+  elemento.innerHTML = contenido;
+  return elemento;
+};
+
+function divFalla(respuesta) {
+  console.error(respuesta);
+  return dom("div", "Error")
 };
 
 function cargarXML(e, ruta) {
