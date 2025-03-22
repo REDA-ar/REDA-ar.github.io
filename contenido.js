@@ -28,7 +28,8 @@ const Contenido = {
       desc:"Algunos ejercicios de análisis matemático."}
   ],
   "Herramientas_Moodle":[
-    {k:"h2", text:"Recursos en Moodle"}
+    {k:"h2", text:"Recursos en Moodle"},
+    {k:"frame", title:"Cuestionario Caída Libre", xml:"moodle/caidalibre.xml"}
   ],
   "Herramientas_Blockly":[
     {k:"h2", text:"Recursos en Blockly"},

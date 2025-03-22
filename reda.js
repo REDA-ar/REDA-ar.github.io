@@ -1,7 +1,11 @@
 window.addEventListener('load', inicializar);
 
 const urlMoodle = "https://reda-ar.github.io/campus/";
-const urlServidor = "https://epli.exp.dc.uba.ar"
+const urlServidor = "https://epli.exp.dc.uba.ar";
+
+const datos = {
+  exec:[]
+};
 
 function inicializar() {
   const body = document.body;
@@ -253,7 +257,7 @@ function armarFrame(data) {
     e.appendChild(armarBotonFrameUrl(f, data.url));
     let b = document.createElement('button');
     b.innerHTML = 'abrir';
-    b.addEventListener('click', function(e) {open(data.url);})
+    b.addEventListener('click', function(e) {open(data.url);});
     e.appendChild(b);
     f.style.display = 'none';
     e.appendChild(f);
@@ -271,14 +275,14 @@ function armarFrame(data) {
     let f = document.createElement('div');
     f.classList.add('xmlView');
     e.appendChild(armarBotonFrameXml(f, data.xml));
-    // let bd = document.createElement('button');
-    // bd.innerHTML = 'descargar';
-    // bd.addEventListener('click', function(e) {open(data.xml);})
-    // e.appendChild(bd);
-    let br = document.createElement('button');
-    br.innerHTML = 'responder este cuestionario';
+    let bd = document.createElement('button');
+    bd.innerHTML = 'descargar';
+    bd.addEventListener('click', function(e) {open(data.xml);})
+    e.appendChild(bd);
+    // let br = document.createElement('button');
+    // br.innerHTML = 'responder este cuestionario';
     // br.addEventListener('click', function(e) { ? });
-    e.appendChild(br);
+    // e.appendChild(br);
     f.style.display = 'none';
     e.appendChild(f);
   }
@@ -400,6 +404,10 @@ function cargarXML(e, ruta) {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       e.appendChild(mostrarXML(this.responseXML));
+      for (let f of datos.exec) {
+        f();
+      }
+      datos.exec = [];
     }
   };
   xhttp.open("GET", ruta, true);
@@ -435,6 +443,12 @@ function mostrarXML(xml) {
         div.appendChild(mostrarXML(c));
       }
       return div;
+    case 'quiz':
+      div = document.createElement('div');
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      return div;
     case 'name':
       div = document.createElement('h3');
       div.innerHTML = limpiar(xml.innerHTML);
@@ -456,23 +470,49 @@ function mostrarXML(xml) {
       if (dataPregunta.tipo == '20') { // Es sólo un texto de introducción
 
       } else if (dataPregunta.tipo == '2' || dataPregunta.tipo == '3') { // Opción múltiple
-        // i = idUnico();
-        // for (let r of dataPregunta.respuestas) {
-        //   let j = idUnico();
-        //   let b = document.createElement('button');
-        //   b.innerHTML = r.respuesta;
-        //   b.setAttribute('onclick', `mostrarDevolucion(${i}, ${j})`);
-        //   div.appendChild(b);
-        //   let d = document.createElement('p');
-        //   d.setAttribute('id', `elemento_${j}`);
-        //   d.innerHTML = r.devolucion;
-        //   d.style.display = 'none';
-        //   div.appendChild(d);
-        // }
-        // let devolucion = document.createElement('div');
-        // devolucion.setAttribute('id', `elemento_${i}`);
-        // devolucion.classList.add('campo_devolucion');
-        // div.appendChild(devolucion);
+        if (dataPregunta.respuestas.length > 0) { 
+          i = idUnico();
+          for (let r of dataPregunta.respuestas) {
+            let j = idUnico();
+            let b = document.createElement('button');
+            b.innerHTML = r.respuesta;
+            b.setAttribute('onclick', `mostrarDevolucion(${i}, ${j})`);
+            div.appendChild(b);
+            let d = document.createElement('p');
+            d.setAttribute('id', `elemento_${j}`);
+            d.innerHTML = r.devolucion;
+            d.style.display = 'none';
+            div.appendChild(d);
+          }
+          let devolucion = document.createElement('div');
+          devolucion.setAttribute('id', `elemento_${i}`);
+          devolucion.classList.add('campo_devolucion');
+          div.appendChild(devolucion);
+        }
+      } else {
+        debugger;
+      }
+      return div;
+    case 'question':
+      div = document.createElement('div');
+      div.classList.add('pregunta');
+      tmpStack.push({respuestas:[]});
+      for (let c of xml.children) {
+        div.appendChild(mostrarXML(c));
+      }
+      dataPregunta = tmpStack.pop();
+      const tipo = xml.getAttribute('type');
+      if (tipo == 'category') {
+        // ?
+        return document.createElement('div');
+      } else if (tipo == 'cloze') {
+        let dataCloze = divCloze(dataPregunta.contenido);
+        div.appendChild(dataCloze.div);
+        div.appendChild(botonCloze(dataCloze));
+        let devolucion = document.createElement('div');
+        devolucion.setAttribute('id', `elemento_${dataCloze.id}`);
+        devolucion.classList.add('campo_devolucion');
+        div.appendChild(devolucion);
       } else {
         debugger;
       }
@@ -489,6 +529,11 @@ function mostrarXML(xml) {
     case 'contents':
       div = document.createElement('div');
       div.innerHTML = limpiar(xml.innerHTML);
+      return div;
+    case 'questiontext':
+      div = document.createElement('div');
+      div.style.display = 'none';
+      tmpStack.last().contenido = {formato:xml.getAttribute('format'), contenido:xml.innerHTML};
       return div;
     case 'answers':
       div = document.createElement('div');
@@ -525,8 +570,212 @@ function mostrarXML(xml) {
   return div;
 };
 
+function divCloze(data) {
+  const div = document.createElement('div');
+  const campos = [];
+  if (data.formato == "html") {
+    let contenido = limpiar(data.contenido);
+    let iAbreLlave = contenido.indexOf("{");
+    while(iAbreLlave > 0) {
+      let iCierraLlave = indexNoEscapeado(contenido, "}", iAbreLlave);
+      let dataCampoCloze = campoCloze(contenido.substring(iAbreLlave+1,iCierraLlave));
+      contenido = contenido.substring(0,iAbreLlave) +
+        dataCampoCloze.xml +
+        contenido.substring(iCierraLlave+1)
+      ;
+      if ('info' in dataCampoCloze) {
+        campos.push(dataCampoCloze.info);
+      }
+      iAbreLlave = contenido.indexOf("{", iAbreLlave + dataCampoCloze.xml.length + 1);
+    }
+    div.innerHTML = contenido;
+  } else {
+    debugger;
+  }
+  return {div, campos, id:idUnico()};
+};
+
+const tiposCloze = {
+  "SHORTANSWER":"SA","SA":"SA","MW":"SA",
+  "SHORTANSWER_C":"SAC","SAC":"SAC","MWC":"SAC",
+  "NUMERICAL":"NM","NM":"NM",
+  "MULTICHOICE":"MC","MC":"MC",
+  "MULTICHOICE_V":"MCV","MCV":"MCV",
+  "MULTICHOICE_H":"MCH","MCH":"MCH",
+  "MULTIRESPONSE":"MR","MR":"MR",
+  "MULTIRESPONSE_H":"MR_H","MR_H":"MR_H"
+};
+
+function campoCloze(data) {
+  let xml = "";
+  const info = {};
+  let iDosPuntos1 = data.indexOf(":");
+  if (iDosPuntos1 > 0) {
+    let iDosPuntos2 = data.indexOf(":", iDosPuntos1 + 1);
+    let tipo = data.substring(iDosPuntos1 + 1, iDosPuntos2);
+    if (tipo in tiposCloze) {
+      tipo = tiposCloze[tipo];
+    } else { // Falsa alarma
+      return{xml: `{${data}}`};
+    }
+    info.tipo = tipo;
+    if (iDosPuntos1 > 0) {
+      info.n = Number.parseInt(data.substring(0,iDosPuntos1));
+    }
+    let j = iDosPuntos2+1
+    info.respuestas = [];
+    while (j < data.length) {
+      let delimitador = data.charAt(j);
+      let fin = proximoDelimitador(data, ["=","~","#"], j+1);
+      if (["=","~","%"].includes(delimitador)) {
+        j++;
+        if (delimitador == "~" && data.charAt(j) == "=") {
+          j++;
+          delimitador = "=";
+          fin = proximoDelimitador(data, ["=","~","#"], j);
+        }
+        let puntaje = delimitador == "=" ? 100 : 0;
+        if (["=","~"].includes(delimitador) && data.charAt(j) == "%") {
+          j++;
+          delimitador = "%";
+        }
+        if (delimitador == "%") {
+          let finPorcentaje = data.indexOf("%",j);
+          puntaje = Number.parseFloat(data.substring(j,finPorcentaje));
+          j = finPorcentaje+1;
+        }
+        let contenido = data.substring(j,fin);
+        info.respuestas.push({contenido, puntaje});
+      } else if (delimitador == "#") {
+        let contenido = data.substring(j+1,fin);
+        info.respuestas.last().feedback = contenido;
+      } else { // Es la respuesta sin delimitador y por lo tanto, sin puntaje asignado
+        let contenido = data.substring(j,fin);
+        info.respuestas.push({contenido, puntaje:0});
+      }
+      j = fin;
+    }
+    const id = `cloze_${idUnico()}`;
+    info.id = id;
+    if (["SA","SAC","NM"].includes(tipo)) {
+      xml = `<input type="${tipo=="NM" ? 'number" step="0.01' : "text"}" id="${id}">`;
+    } else if (["MC","MCV","MCH","MR","MR_H"].includes(tipo)) {
+      xml = `<select id="${id}"><option value="">&nbsp;</option>`;
+      let i = 0;
+      for (let respuesta of info.respuestas) {
+        xml += `<option value="${i}">${respuesta.contenido}</option>`
+        i++;
+      }
+      xml += "</select>"
+    } else { // Falsa alarma
+      return{xml: `{${data}}`};
+    }
+  } else { // Falsa alarma
+    return{xml: `{${data}}`};
+  }
+  return {xml, info};
+};
+
+function botonCloze(data) {
+  const boton = document.createElement('button');
+  boton.innerHTML = "Comprobar";
+  boton.addEventListener('click', function(e) {
+    let contenido = [];
+    for (let campo of data.campos) {
+      let respuesta = document.getElementById(campo.id).value;
+      let puntaje = null;
+      if (["SA","SAC","NM"].includes(campo.tipo)) {
+        for (let r of campo.respuestas) {
+          if (respuestaCoincide(campo.tipo, respuesta, r.contenido) && (puntaje === null || campo.puntaje > puntaje)) {
+            puntaje = campo.puntaje;
+          }
+        }
+      } else {
+        if (respuesta != "") {
+          puntaje = campo.respuestas[respuesta].puntaje;
+          respuesta = campo.respuestas[respuesta].contenido;
+        }
+      }
+      contenido.push(`${respuesta == "" ? "-" : respuesta} :: ${puntaje === null ? 0 : puntaje}`);
+    };
+    document.getElementById(`elemento_${data.id}`).innerHTML = contenido.join("<br/>");
+  });
+  return boton;
+};
+
+function respuestaCoincide(tipo, dada, esperada) {
+  if (tipo == "SA") {
+    return dada.toUpperCase() == esperada.toUpperCase();
+  }
+  if (tipo == "SAC") {
+    return dada == esperada;
+  }
+  if (tipo == "NM") {
+    let n = esperada;
+    let margen = 0;
+    let iDosPuntos = n.indexOf(":");
+    if (iDosPuntos > 0) {
+      n = n.substring(0,iDosPuntos);
+      margen = Number.parseFloat(n.substring(iDosPuntos+1));
+    }
+    n = Number.parseFloat(n);
+    m = Number.parseFloat(dada);
+    return m >= n-margen && m <= n+margen;
+  }
+  debugger;
+};
+
+function proximoDelimitador(texto, delimitadores, desde=0) {
+  let i=desde;
+  while (i<texto.length && !delimitadores.includes(texto.charAt(i))) {
+    i++;
+  }
+  return i;
+};
+
+function indexNoEscapeado(texto, busqueda, desdeInicial=0) {
+  let desde = desdeInicial;
+  let i = texto.indexOf(busqueda, desde);
+  while (i > 0 && texto.charAt(i-1) == "\\") {
+    desde = i+1;
+    i = texto.indexOf(busqueda, desde);
+  }
+  return i;
+};
+
 function limpiar(s) {
-  return s.replaceAll('&lt;','<').replaceAll('&gt;','>');
+  let r = s;
+  let iCDATA = r.indexOf("<![CDATA[");
+  if (iCDATA >= 0) {
+    let iEndCDATA = r.indexOf("]]>",iCDATA + "<![CDATA[".length);
+    return limpiar(r.substring(0, iCDATA)) +
+      parseLatex(r.substring(iCDATA + "<![CDATA[".length, iEndCDATA)) +
+      limpiar(r.substring(iEndCDATA + "]]>".length))
+    ;
+  }
+  return r.replaceAll('&lt;','<').replaceAll('&gt;','>');
+};
+
+function parseLatex(s) {
+  let r = s;
+  let iLatex = r.indexOf("\\[");
+  if (iLatex >= 0) {
+    let iEndLatex = r.indexOf("\\]", iLatex + "\\[".length);
+    return r.substring(0, iLatex) +
+      latex(r.substring(iLatex, iEndLatex + "\\[".length)) +
+      parseLatex(r.substring(iEndLatex + "\\]".length))
+    ;
+  }
+  return r;
+}
+
+function latex(s) {
+  let id = idUnico();
+  datos.exec.push(function() {
+    document.getElementById(`latex_${id}`).innerHTML = s;
+    MathJax.typeset();
+  });
+  return `<span id="latex_${id}"></span>`;
 };
 
 function mostrarDevolucion(i_salida, i_texto) {
@@ -574,9 +823,11 @@ const parametroURL = function(clave) {
 
 const actualizarURL = function(clave) {
   let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?s=${clave}`;
-  if (history.pushState) {
+  if (history.replaceState) {
+    window.history.replaceState({path:newurl},'',newurl);
+  } else if (history.pushState) {
     window.history.pushState({path:newurl},'',newurl);
   } else {
-    window.history.replaceState({path:newurl},'',newurl);
+    window.location.href = newurl;
   }
 };
