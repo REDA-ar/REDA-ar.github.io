@@ -17,6 +17,10 @@ const data = {
 
 Mila.alIniciar(
   function() {
+    let l = document.createElement("link");
+    l.setAttribute("href","https://fonts.googleapis.com/css?family=Nunito");
+    l.setAttribute("rel","stylesheet");
+    document.head.appendChild(l);
     const menuSuperior = Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[
       Mila.Pantalla.nuevaImagen({
         ruta:"https://reda.exactas.uba.ar/wp-content/uploads/2025/03/LOGO_Reda_Web-4.png",
@@ -53,16 +57,16 @@ Mila.alIniciar(
     // Pantalla inicio
     const presentacion = Mila.Pantalla.nuevoPanel({margenExterno:20, elementos: [
       Mila.Pantalla.nuevaEtiqueta({texto:"Bienvenidos a ReDa", colorTexto:"#fff", ancho:"Maximizar",
-        tamanioLetra:26, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:26, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
       Mila.Pantalla.nuevaEtiqueta({texto:"Recursos Educativos Digitales Abiertos", colorTexto:"#7bdcb5", ancho:"Maximizar",
-        tamanioLetra:22, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:22, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
       Mila.Pantalla.nuevaEtiqueta({texto:presentacionReda[0], colorTexto:"#fff", ancho:"Maximizar",
-        tamanioLetra:18, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:18, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
       Mila.Pantalla.nuevaEtiqueta({texto:presentacionReda[1], colorTexto:"#7bdcb5", ancho:"Maximizar",
-        tamanioLetra:18, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:18, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       })
     ]});
     const panelInicio = Mila.Pantalla.nuevoPanel({elementos: [
@@ -95,17 +99,17 @@ Mila.alIniciar(
     });
     const proyectos = Mila.Pantalla.nuevoPanel({margenExterno:Mila.Geometria.rectanguloEn__De_x_(20,0,20,0), elementos: [
       Mila.Pantalla.nuevaEtiqueta({texto:"PROYECTOS EN CURSO", colorTexto:"#7bdcb5", ancho:"Maximizar",
-        tamanioLetra:20, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:20, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
       Mila.Pantalla.nuevaEtiqueta({texto:"Innovación y Pasión", colorTexto:"#fff", ancho:"Maximizar",
-        tamanioLetra:26, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:26, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
       Mila.Pantalla.nuevaEtiqueta({texto:presentacionReda[2], colorTexto:"#7bdcb5", ancho:"Maximizar",
-        tamanioLetra:16, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:16, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
       botonesProyectos,
       Mila.Pantalla.nuevaEtiqueta({texto:presentacionReda[3], colorTexto:"#fff", ancho:"Maximizar",
-        tamanioLetra:12, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+        tamanioLetra:12, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       })
     ]});
     const panelProyectos = Mila.Pantalla.nuevoPanel({elementos: [
