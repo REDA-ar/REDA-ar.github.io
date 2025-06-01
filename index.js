@@ -9,6 +9,7 @@ const decrementoTamañoNivel = 2;
 const paddingInicial = 0;
 const incrementoPaddingNivel = 3;
 let catalogoYaCargado = false;
+let bloquesYaCargados = false;
 
 const data = {
   carrito:[]
@@ -16,7 +17,7 @@ const data = {
 
 Mila.alIniciar(
   function() {
-    const menuSuperior = Mila.Pantalla.nuevoPanel({alto:"Minimizar",colorBorde:"#fff",elementos:[
+    const menuSuperior = Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[
       Mila.Pantalla.nuevaImagen({
         ruta:"https://reda.exactas.uba.ar/wp-content/uploads/2025/03/LOGO_Reda_Web-4.png",
         funcion:volverAlInicio, alto:60, margenExterno:15
@@ -28,7 +29,7 @@ Mila.alIniciar(
         alto:"Minimizar", margenExterno:15,
         elementos:[
           Mila.Pantalla.nuevoBoton({
-            texto:"Proyectos", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10
+            texto:"Proyectos", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10, funcion:verProyectos
           }),
           Mila.Pantalla.nuevoBoton({
             texto:"Equipo", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10
@@ -45,9 +46,9 @@ Mila.alIniciar(
         ], disposicion:Mila.Pantalla.DisposicionHorizontal
       })
     ], disposicion:Mila.Pantalla.DisposicionHorizontalAlternada});
-    const menuInferior = Mila.Pantalla.nuevoPanel({alto:"Minimizar",colorBorde:"#fff",elementos:[
+    const menuInferior = Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[
       Mila.Pantalla.nuevaEtiqueta({texto:"2025",colorTexto:"#fff"})
-    ], disposicion:Mila.Pantalla.DisposicionHorizontalInvertida});
+    ], disposicion:Mila.Pantalla.DisposicionHorizontalInvertida, colorFondo:"#373737"});
 
     // Pantalla inicio
     const presentacion = Mila.Pantalla.nuevoPanel({margenExterno:20, elementos: [
@@ -74,17 +75,70 @@ Mila.alIniciar(
       colorFondo:"#000"
     }, 'inicio');
 
+    // Pantalla proyectos
+    const botonesProyectos = Mila.Pantalla.nuevoPanel({
+      alto:"Minimizar", margenExterno:15,
+      elementos:[
+        Mila.Pantalla.nuevoPanel({cssAdicional:{"border-radius":"10px"}, alto:"Minimizar", elementos:[
+          Mila.Pantalla.nuevaEtiqueta({texto:"Ejercitación",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
+          Mila.Pantalla.nuevaEtiqueta({texto:"Galería de ejercicios",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
+        ], margenExterno:10, colorFondo:"#373737", funcion: verCatalogo}),
+        Mila.Pantalla.nuevoPanel({cssAdicional:{"border-radius":"10px"}, alto:"Minimizar", elementos:[
+          Mila.Pantalla.nuevaEtiqueta({texto:"Visualización",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
+          Mila.Pantalla.nuevaEtiqueta({texto:"Y Datos Personalizados",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
+        ], margenExterno:10, colorFondo:"#373737", destino: "https://reda-ar.github.io/shinys/"}),
+        Mila.Pantalla.nuevoPanel({cssAdicional:{"border-radius":"10px"}, alto:"Minimizar", elementos:[
+          Mila.Pantalla.nuevaEtiqueta({texto:"Bloques",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
+          Mila.Pantalla.nuevaEtiqueta({texto:"Programar por bloques",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
+        ], margenExterno:10, colorFondo:"#373737", funcion: verBloques})
+      ], disposicion:Mila.Pantalla.DisposicionHorizontal
+    });
+    const proyectos = Mila.Pantalla.nuevoPanel({margenExterno:Mila.Geometria.rectanguloEn__De_x_(20,0,20,0), elementos: [
+      Mila.Pantalla.nuevaEtiqueta({texto:"PROYECTOS EN CURSO", colorTexto:"#7bdcb5", ancho:"Maximizar",
+        tamanioLetra:20, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+      }),
+      Mila.Pantalla.nuevaEtiqueta({texto:"Innovación y Pasión", colorTexto:"#fff", ancho:"Maximizar",
+        tamanioLetra:26, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+      }),
+      Mila.Pantalla.nuevaEtiqueta({texto:presentacionReda[2], colorTexto:"#7bdcb5", ancho:"Maximizar",
+        tamanioLetra:16, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+      }),
+      botonesProyectos,
+      Mila.Pantalla.nuevaEtiqueta({texto:presentacionReda[3], colorTexto:"#fff", ancho:"Maximizar",
+        tamanioLetra:12, cssAdicional: {"font-family":"math", "text-wrap-mode":"wrap"}
+      })
+    ]});
+    const panelProyectos = Mila.Pantalla.nuevoPanel({elementos: [
+      proyectos,
+      Mila.Pantalla.nuevaImagen({ruta:"https://reda.exactas.uba.ar/wp-content/uploads/2025/03/foto02-edited.jpg",
+        alto:"Maximizar", ancho:"Maximizar", cssAdicional:{"aspect-ratio":1,"overflow":"clip","object-fit":"cover","border-radius":"100%"},margenExterno:50})
+    ], disposicion:Mila.Pantalla.DisposicionHorizontal});
+    Mila.Pantalla.nueva({elementos:[menuSuperior,menuInferior,panelProyectos],
+      disposicion:Mila.Pantalla.DisposicionVerticalAlternada,
+      colorFondo:"#000"
+    }, 'proyectos');
+
+    // Pantalla bloques
+    data.panelBloques = Mila.Pantalla.nuevoPanel();
+    Mila.Pantalla.nueva({elementos:[menuSuperior,menuInferior,data.panelBloques],
+      disposicion:Mila.Pantalla.DisposicionVerticalAlternada,
+      colorFondo:"#000"
+    }, 'bloques');
+
     // Pantalla catálogo
     const menuBuscador = Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[
       Mila.Pantalla.nuevaEtiqueta({texto:"Buscar: ", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,5,5,5)}),
       Mila.Pantalla.nuevoCampoTexto({margenExterno:3,colorBorde:"#000",grosorBorde:1,margenInterno:2}),
       Mila.Pantalla.nuevaEtiqueta({texto:"Filtros: ...",margenExterno:Mila.Geometria.rectanguloEn__De_x_(30,5,0,5)})
-    ], disposicion:Mila.Pantalla.DisposicionHorizontal});
-    data.panelDatos = Mila.Pantalla.nuevoPanel({cssAdicional:{border:'solid 1px black'}});
+    ], disposicion:Mila.Pantalla.DisposicionHorizontal, colorFondo:"#fff"});
+    data.panelDatos = Mila.Pantalla.nuevoPanel({cssAdicional:{border:'solid 1px black'}, colorFondo:"#fff"});
     const escritorio = Mila.Pantalla.nuevoPanel({elementos:[
+      Mila.Pantalla.nuevaEtiqueta({texto:"Catálogo de ejercicios",ancho:"Maximizar",
+        margenExterno:10,tamanioLetra:20,colorTexto:"#7bdcb5"
+      }),
       menuBuscador,
       data.panelDatos
-    ], colorFondo:"#fff"});
+    ]});
     Mila.Pantalla.nueva({elementos:[menuSuperior,menuInferior,escritorio],
       disposicion:Mila.Pantalla.DisposicionVerticalAlternada,
       colorFondo:"#000"
@@ -93,33 +147,83 @@ Mila.alIniciar(
     // Pantalla carrito
     const menuSuperiorCarrito = Mila.Pantalla.nuevoPanel({alto:"Minimizar",
       elementos:[
-        Mila.Pantalla.nuevaEtiqueta({texto:"Carrito", margenExterno:10}),
-        Mila.Pantalla.nuevoBoton({
-          texto:"Completar pedido", funcion:completarPedido, margenExterno:8
-        }),
         Mila.Pantalla.nuevoBoton({
           texto:"Seguir comprando", funcion:verCatalogo, margenExterno:8
+        }),
+        Mila.Pantalla.nuevoBoton({
+          texto:"Completar pedido", funcion:completarPedido, margenExterno:8
         })
       ], disposicion:Mila.Pantalla.DisposicionHorizontalAlternada, colorFondo:"#fff"
     });
     data.panelCarrito = Mila.Pantalla.nuevoPanel({cssAdicional:{border:'solid 1px black'}, colorFondo:"#fff"});
-    Mila.Pantalla.nueva({elementos:[menuSuperior,menuInferior,Mila.Pantalla.nuevoPanel({elementos:[menuSuperiorCarrito,data.panelCarrito]})],
+    Mila.Pantalla.nueva({elementos:[
+      menuSuperior,
+      menuInferior,
+      Mila.Pantalla.nuevoPanel({elementos:[
+        Mila.Pantalla.nuevaEtiqueta({texto:"Carrito",ancho:"Maximizar",
+          margenExterno:10,tamanioLetra:20,colorTexto:"#7bdcb5"
+        }),
+        menuSuperiorCarrito,
+        data.panelCarrito]
+      })],
       disposicion:Mila.Pantalla.DisposicionVerticalAlternada,
       colorFondo:"#000"
     }, 'carrito');
     CargarDatosEn_(data);
+    ValidarArgumentosURL();
   }
 );
 
 function volverAlInicio() {
-  Mila.Pantalla.CambiarA_('inicio');
+  MostrarSeccion('inicio');
+};
+
+function MostrarBloques() {
+  const elementos = [];
+  for (let actividad of data.EJERCICIOS_BLOQUES) {
+    AgregarActividadBloques(actividad, elementos);
+  }
+  data.panelBloques.CambiarElementosA_([
+    Mila.Pantalla.nuevaEtiqueta({texto:"Actividades de programación por bloques",ancho:"Maximizar",
+      margenExterno:10,tamanioLetra:20,colorTexto:"#7bdcb5"}),
+    Mila.Pantalla.nuevoPanel({elementos})
+  ]);
+  const nodoAnterior = data.panelBloques._nodoHtml.parentNode;
+  data.panelBloques.QuitarDelHtml();
+  data.panelBloques.PlasmarEnHtml(nodoAnterior);
+  Mila.Pantalla._Redimensionar();
+};
+
+function AgregarActividadBloques(actividad, elementos) {
+  const vistaPrevia = Mila.Pantalla.nuevaWebIncrustada({
+    url:actividad.url,
+    cssAdicional:{border:'solid 1px black'},
+    visible:false,
+    alto:500
+  });
+  const botonVistaPrevia = Mila.Pantalla.nuevoBoton({
+    texto:"Vista previa", funcion:function() {
+      alternarVisibilidad(vistaPrevia);
+    }, margenExterno:10
+  });
+  elementos.push(Mila.Pantalla.nuevoPanel({alto:"Minimizar",colorFondo:"#fff",elementos:[
+    Mila.Pantalla.nuevaEtiqueta({texto:actividad.nombre, margenExterno:5, tamanioLetra:16}),
+    Mila.Pantalla.nuevoPanel({margenExterno:10,elementos:[
+      Mila.Pantalla.nuevaEtiqueta({texto:actividad.desc, cssAdicional:{"text-wrap-mode":"wrap","text-align":"left"}}),
+      Mila.Pantalla.nuevoPanel({disposicion:Mila.Pantalla.DisposicionHorizontal,elementos:[
+        Mila.Pantalla.nuevoBoton({texto:"Abrir",destino:actividad.url,margenExterno:10}),
+        botonVistaPrevia
+      ],alto:"Minimizar"}),
+      vistaPrevia
+    ],colorFondo:"#fff",alto:"Minimizar"})
+  ]}));
 };
 
 function MostrarCatalogo(info={}) {
   const filtros = 'filtros' in info ? info.filtros : [];
   const orden = 'orden' in info ? info.orden : (x)=>x;
   const elementos = [];
-  for (let tema of data.DATOS) {
+  for (let tema of data.EJERCICIOS_MOODLE) {
     AgregarSeccion(tema, elementos);
   }
   data.panelDatos.CambiarElementosA_(elementos);
@@ -229,7 +333,7 @@ function verCarrito() {
     : Mila.Nada
   ;
   data.panelCarrito.CambiarElementosA_(elementos);
-  Mila.Pantalla.CambiarA_('carrito');
+  MostrarSeccion('carrito');
   if (nodoAnterior.esAlgo()) {
     data.panelCarrito.QuitarDelHtml();
     data.panelCarrito.PlasmarEnHtml(nodoAnterior);
@@ -237,12 +341,16 @@ function verCarrito() {
   }
 };
 
+function verProyectos() {
+  MostrarSeccion('proyectos');
+};
+
+function verBloques() {
+  MostrarSeccion('bloques');
+};
+
 function verCatalogo() {
-  Mila.Pantalla.CambiarA_('catálogo');
-  if (!catalogoYaCargado) {
-    MostrarCatalogo();
-    catalogoYaCargado = true;
-  }
+  MostrarSeccion('catálogo');
 };
 
 function estaEnElCarrito(idRecurso) {
@@ -279,5 +387,63 @@ function quitarDelCarrito(idRecurso) {
 
 const presentacionReda = [
   "En ReDa buscamos transformar y potenciar la experiencia de aprendizaje a través de herramientas digitales innovadoras. Trabajamos para desarrollar aplicaciones y recursos digitales gratuitos que permitan acompañar el aprendizaje de los estudiantes, tanto en entornos presenciales como virtuales. Explorá nuestras propuestas y descubrí cómo estas herramientas pueden hacer la diferencia en el camino del aprendizaje.",
-  "Sumate a esta gran comunidad, generando recursos gratuitos y compartiendo experiencias."
+  "Sumate a esta gran comunidad, generando recursos gratuitos y compartiendo experiencias.",
+  "Nuestras principales líneas de trabajo son:<br/>El desarrollo de aplicaciones interactivas para facilitar la comprensión de conceptos complejos. La visualización interactiva y el trabajo con datos personalizados. La ejercitación con retroalimentación, para acceder a una posible resolución correcta de los ejercicios y la evaluación automática. La capacitación y  el acompañamiento docente en el uso de tecnologías educativas innovadoras. La generación y difusión de recursos educativos abiertos accesibles para la comunidad educativa, promoviendo una educación inclusiva, gratuita y de calidad.",
+  "Si sos amigo del git, podés acceder a nuestro material \"crudo\" en <a style='color:#7bdcb5' href='https://github.com/orgs/REDA-ar/repositories' target='blank'>nuestro repositorio</a>."
 ];
+
+function MostrarSeccion(idSeccion) {
+  if (idSeccion == "Herramientas_Blockly") {
+    MostrarSeccion('bloques'); return;
+  }
+  Mila.Pantalla.CambiarA_(idSeccion);
+  ActualizarURL(idSeccion);
+  if (idSeccion == "catálogo") {
+    if (!catalogoYaCargado) {
+      MostrarCatalogo();
+      catalogoYaCargado = true;
+    }
+  } else if (idSeccion == "bloques") {
+    if (!bloquesYaCargados) {
+      MostrarBloques();
+      bloquesYaCargadoscatalogoYaCargado = true;
+    }
+  }
+};
+
+function ValidarArgumentosURL() {
+  let url = location.href;
+  let clave = "s".replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");
+  let regexS = "[\\?&]"+clave+"=([^&#]*)";
+  let regex = new RegExp( regexS );
+  let results = regex.exec( url );
+  if (Mila.Tipo.esNada(results)) {
+    return;
+  }
+  results = results[1]
+    .replaceAll("%20", ' ')
+    .replaceAll("%C3%A1", 'á')
+    .replaceAll("%C3%A9", 'é')
+    .replaceAll("%C3%AD", 'í')
+    .replaceAll("%C3%B3", 'ó')
+    .replaceAll("%C3%BA", 'ú')
+    .replaceAll("%C3%81", 'Á')
+    .replaceAll("%C3%89", 'É')
+    .replaceAll("%C3%8D", 'Í')
+    .replaceAll("%C3%93", 'Ó')
+    .replaceAll("%C3%9A", 'Ú')
+    .replaceAll("%C3%91", 'Ñ')
+    .replaceAll("%C3%B1", 'ñ');
+  MostrarSeccion(results);
+};
+
+function ActualizarURL(clave) {
+  let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + `?s=${clave}`;
+  if (history.replaceState) {
+    window.history.replaceState({path:newurl},'',newurl);
+  } else if (history.pushState) {
+    window.history.pushState({path:newurl},'',newurl);
+  } else {
+    window.location.href = newurl;
+  }
+};
