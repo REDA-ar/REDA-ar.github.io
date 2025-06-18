@@ -15,6 +15,9 @@ const data = {
   carrito:[]
 };
 
+const urlRepoEjerciciosRaw = "https://raw.githubusercontent.com/REDA-ar/ejercicios/refs/heads/main";
+const urlWebEjercicios = "https://reda-ar.github.io/ejercicios";
+
 Mila.alIniciar(
   function() {
     let l = document.createElement("link");
@@ -237,7 +240,7 @@ function MostrarCatalogo(info={}) {
   Mila.Pantalla._Redimensionar();
 };
 
-function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, tamaño=tamañoInicial) {
+function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, tamaño=tamañoInicial, rutaDescarga="/") {
   const subElementos = [];
   tamaño -= decrementoTamañoNivel;
   padding += incrementoPaddingNivel;
@@ -245,6 +248,7 @@ function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, t
     alto:"Minimizar", disposicion:Mila.Pantalla.DisposicionHorizontal
   });
   const nuevosElementos = [encabezado];
+  const nuevaRuta = rutaDescarga + ('ruta' in tema ? tema.ruta + "/" : "");
   if ('nombre' in tema) {
     idRecurso.push(tema.nombre);
     encabezado.AgregarElemento_(Mila.Pantalla.nuevaEtiqueta({
@@ -255,11 +259,11 @@ function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, t
   }
   if ('contenido' in tema) {
     for (let subTema of tema.contenido) {
-      AgregarSeccion(subTema, subElementos, idRecurso, padding, tamaño);
+      AgregarSeccion(subTema, subElementos, idRecurso, padding, tamaño, nuevaRuta);
     }
   }
   if ('recurso' in tema) {
-    nuevosElementos.push(panelRecurso(tema.recurso, idRecurso.copia()));
+    nuevosElementos.push(panelRecurso(tema.recurso, idRecurso.copia(), nuevaRuta));
   }
   if (!subElementos.esVacia()) {
     const subSeccion = Mila.Pantalla.nuevoPanel({elementos:subElementos,
@@ -280,29 +284,44 @@ function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, t
   idRecurso.SacarUltimo();
 };
 
-function panelRecurso(tema, idRecurso) {
-  const vistaPrevia = Mila.Pantalla.nuevaWebIncrustada({
-    url:tema.url,
-    cssAdicional:{border:'solid 1px black'},
-    visible:false,
-    alto:500
-  });
-  const elementos = [];
+function panelRecurso(tema, idRecurso, rutaDescarga) {
   const margen = Mila.Geometria.rectanguloEn__De_x_(15,0,0,0);
-  elementos.push(Mila.Pantalla.nuevoBoton({
-    texto:"Vista previa", funcion:function() {
-      alternarVisibilidad(vistaPrevia);
-    }, margenExterno:margen
-  }));
-  elementos.push(Mila.Pantalla.nuevoBoton({
-    texto:"Abrir", destino:tema.url, margenExterno:margen
-  }));
-  elementos.push(Mila.Pantalla.nuevoBoton({
-    texto:"Descargar", funcion:function() {
-      Mila.Pantalla.Aviso("Próximamente");
-    }, margenExterno:margen
-  }));
-  elementos.push(/*
+  const botones = [];
+  const elementos = [Mila.Pantalla.nuevoPanel({elementos:botones,
+    alto:"Minimizar",
+    disposicion:Mila.Pantalla.DisposicionHorizontal
+  })];
+  let descarga = Mila.Nada;
+  if ('html' in tema) {
+    let urlHtml = urlWebEjercicios + rutaDescarga + tema.html + ".html";
+    const vistaPrevia = Mila.Pantalla.nuevaWebIncrustada({
+      url: urlHtml,
+      cssAdicional:{border:'solid 1px black'},
+      visible:false,
+      alto:500
+    });
+    botones.push(Mila.Pantalla.nuevoBoton({
+      texto:"Vista previa", funcion:function() {
+        alternarVisibilidad(vistaPrevia);
+      }, margenExterno:margen
+    }));
+    elementos.push(vistaPrevia);
+    botones.push(Mila.Pantalla.nuevoBoton({
+      texto:"Abrir", margenExterno:margen,
+      destino:urlHtml
+    }));
+    descarga = urlRepoEjerciciosRaw + rutaDescarga + tema.html + ".html";
+  } else if ('xml' in tema) {
+    descarga = urlRepoEjerciciosRaw + rutaDescarga + "xml/" + tema.xml + ".xml";
+  }
+  if (descarga.esAlgo()) {
+    botones.push(Mila.Pantalla.nuevoBoton({
+      texto:"Descargar", funcion:function() {
+        open(descarga); // TODO: que efectivamente lo descargue
+      }, margenExterno:margen
+    }));
+  }
+  botones.push(/*
     estaEnElCarrito(idRecurso)
       ? Mila.Pantalla.nuevaEtiqueta({texto:"En el carrito"})
       : */ Mila.Pantalla.nuevoBoton({
@@ -312,10 +331,7 @@ function panelRecurso(tema, idRecurso) {
           }, margenExterno:margen
         })
     );
-  return Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[Mila.Pantalla.nuevoPanel({elementos,
-    alto:"Minimizar",
-    disposicion:Mila.Pantalla.DisposicionHorizontal
-  }), vistaPrevia]});
+  return Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos});
 };
 
 function alternarVisibilidad(elemento) {
