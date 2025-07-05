@@ -127,7 +127,7 @@ Mila.alIniciar(
 
     // Pantalla bloques
     data.panelBloques = Mila.Pantalla.nuevoPanel();
-    Mila.Pantalla.nueva({elementos:[menuSuperior,menuInferior,data.panelBloques],
+    Mila.Pantalla.nueva({elementos:[/*menuSuperior,menuInferior,*/data.panelBloques],
       disposicion:Mila.Pantalla.DisposicionVerticalAlternada,
       colorFondo:"#000"
     }, 'bloques');
