@@ -30,25 +30,31 @@ Mila.alIniciar(
         funcion:volverAlInicio, alto:60, margenExterno:15
       }),
       Mila.Pantalla.nuevoBoton({
-        texto:"Carrito", margenExterno:25, colorFondo:"#7bdcb5", margenInterno:10, funcion:verCarrito
+        texto:"Carrito", margenExterno:25, colorFondo:"#7bdcb5", margenInterno:10, funcion:verCarrito,
+        cssAdicional: {"font-family":"Nunito"}
       }),
       Mila.Pantalla.nuevoPanel({
         alto:"Minimizar", margenExterno:15,
         elementos:[
           Mila.Pantalla.nuevoBoton({
-            texto:"Proyectos", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10, funcion:verProyectos
+            texto:"Proyectos", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10, funcion:verProyectos,
+            cssAdicional: {"font-family":"Nunito"}
           }),
           Mila.Pantalla.nuevoBoton({
-            texto:"Equipo", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10
+            texto:"Equipo", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10,
+            cssAdicional: {"font-family":"Nunito"}
           }),
           Mila.Pantalla.nuevoBoton({
-            texto:"Catálogo", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10, funcion:verCatalogo
+            texto:"Catálogo", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10, funcion:verCatalogo,
+            cssAdicional: {"font-family":"Nunito"}
           }),
           Mila.Pantalla.nuevoBoton({
-            texto:"Apoyos", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10
+            texto:"Apoyos", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10,
+            cssAdicional: {"font-family":"Nunito"}
           }),
           Mila.Pantalla.nuevoBoton({
-            texto:"Contacto", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10
+            texto:"Contacto", margenExterno:10, colorFondo:"#7bdcb5", margenInterno:10,
+            cssAdicional: {"font-family":"Nunito"}
           })
         ], disposicion:Mila.Pantalla.DisposicionHorizontal
       })
@@ -86,15 +92,15 @@ Mila.alIniciar(
     const botonesProyectos = Mila.Pantalla.nuevoPanel({
       alto:"Minimizar", margenExterno:15,
       elementos:[
-        Mila.Pantalla.nuevoPanel({cssAdicional:{"border-radius":"10px"}, alto:"Minimizar", elementos:[
+        Mila.Pantalla.nuevoPanel({cssAdicional:{"font-family":"Nunito", "border-radius":"10px"}, alto:"Minimizar", elementos:[
           Mila.Pantalla.nuevaEtiqueta({texto:"Ejercitación",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
           Mila.Pantalla.nuevaEtiqueta({texto:"Galería de ejercicios",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
         ], margenExterno:10, colorFondo:"#373737", funcion: verCatalogo}),
-        Mila.Pantalla.nuevoPanel({cssAdicional:{"border-radius":"10px"}, alto:"Minimizar", elementos:[
+        Mila.Pantalla.nuevoPanel({cssAdicional:{"font-family":"Nunito", "border-radius":"10px"}, alto:"Minimizar", elementos:[
           Mila.Pantalla.nuevaEtiqueta({texto:"Visualización",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
           Mila.Pantalla.nuevaEtiqueta({texto:"Y Datos Personalizados",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
         ], margenExterno:10, colorFondo:"#373737", destino: "https://reda-ar.github.io/shinys/"}),
-        Mila.Pantalla.nuevoPanel({cssAdicional:{"border-radius":"10px"}, alto:"Minimizar", elementos:[
+        Mila.Pantalla.nuevoPanel({cssAdicional:{"font-family":"Nunito", "border-radius":"10px"}, alto:"Minimizar", elementos:[
           Mila.Pantalla.nuevaEtiqueta({texto:"Bloques",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
           Mila.Pantalla.nuevaEtiqueta({texto:"Programar por bloques",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
         ], margenExterno:10, colorFondo:"#373737", funcion: verBloques})
@@ -162,7 +168,7 @@ Mila.alIniciar(
         })
       ], disposicion:Mila.Pantalla.DisposicionHorizontalAlternada, colorFondo:"#fff"
     });
-    data.panelCarrito = Mila.Pantalla.nuevoPanel({cssAdicional:{border:'solid 1px black'}, colorFondo:"#fff"});
+    data.panelCarrito = Mila.Pantalla.nuevoPanel({colorBorde:"#000",grosorBorde:1,colorFondo:"#fff"});
     Mila.Pantalla.nueva({elementos:[
       menuSuperior,
       menuInferior,
@@ -218,8 +224,8 @@ function AgregarActividadBloques(actividad, elementos) {
     Mila.Pantalla.nuevoPanel({margenExterno:10,elementos:[
       Mila.Pantalla.nuevaEtiqueta({texto:actividad.desc, cssAdicional:{"text-wrap-mode":"wrap","text-align":"left"}}),
       Mila.Pantalla.nuevoPanel({disposicion:Mila.Pantalla.DisposicionHorizontal,elementos:[
-        Mila.Pantalla.nuevoBoton({texto:"Abrir",destino:actividad.url,margenExterno:10}),
-        botonVistaPrevia
+        Mila.Pantalla.nuevoBoton({texto:"Abrir",destino:actividad.url,margenExterno:10})/*,
+        botonVistaPrevia*/
       ],alto:"Minimizar"}),
       vistaPrevia
     ],colorFondo:"#fff",alto:"Minimizar"})
