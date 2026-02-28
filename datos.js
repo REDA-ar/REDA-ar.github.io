@@ -604,9 +604,9 @@ Mila.Base.RegistrarFuncion_(function CargarDatosEn_(data) {
     ruta:"quimica",
     contenido:[{
       nombre:"Sales",
-      ruta:"sales",
+      ruta:"04-sales",
       recurso:{
-        html:"index"
+        html:"quimica_sales"
       }
     }]
   }];

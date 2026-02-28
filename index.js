@@ -208,12 +208,7 @@ function MostrarBloques() {
 };
 
 function AgregarActividadBloques(actividad, elementos) {
-  const vistaPrevia = Mila.Pantalla.nuevaWebIncrustada({
-    url:actividad.url,
-    cssAdicional:{border:'solid 1px black'},
-    visible:false,
-    alto:500
-  });
+  const vistaPrevia = panelVistaPrevia(actividad.url);
   const botonVistaPrevia = Mila.Pantalla.nuevoBoton({
     texto:"Vista previa", funcion:function() {
       alternarVisibilidad(vistaPrevia);
@@ -272,9 +267,9 @@ function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, t
     nuevosElementos.push(panelRecurso(tema.recurso, idRecurso.copia(), nuevaRuta));
   }
   if (!subElementos.esVacia()) {
-    const subSeccion = Mila.Pantalla.nuevoPanel({elementos:subElementos,
-      alto:"Minimizar", visible:false
-    });
+    const subSeccion = Mila.Pantalla.nuevoPanelDesplegable(function() {
+      return subElementos;
+    }, {alto:"Minimizar"});
     encabezado.AgregarElemento_(Mila.Pantalla.nuevoBoton({
       texto:"+", funcion:function() {
         alternarVisibilidad(subSeccion);
@@ -300,12 +295,7 @@ function panelRecurso(tema, idRecurso, rutaDescarga) {
   let descarga = Mila.Nada;
   if ('html' in tema) {
     let urlHtml = urlWebEjercicios + rutaDescarga + tema.html + ".html";
-    const vistaPrevia = Mila.Pantalla.nuevaWebIncrustada({
-      url: urlHtml,
-      cssAdicional:{border:'solid 1px black'},
-      visible:false,
-      alto:500
-    });
+    const vistaPrevia = panelVistaPrevia(urlHtml);
     botones.push(Mila.Pantalla.nuevoBoton({
       texto:"Vista previa", funcion:function() {
         alternarVisibilidad(vistaPrevia);
@@ -340,11 +330,21 @@ function panelRecurso(tema, idRecurso, rutaDescarga) {
   return Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos});
 };
 
+function panelVistaPrevia(urlHtml) {
+  return Mila.Pantalla.nuevoPanelDesplegable(function() {
+    return Mila.Pantalla.nuevaWebIncrustada({
+      url: urlHtml,
+      cssAdicional:{border:'solid 1px black'},
+      alto:500
+    });
+  });
+};
+
 function alternarVisibilidad(elemento) {
-  if (elemento.visible()) {
-    elemento.Ocultar();
+  if (elemento.desplegado()) {
+    elemento.Plegar();
   } else {
-    elemento.Mostrar();
+    elemento.Desplegar();
   }
   Mila.Pantalla._Redimensionar();
 };
@@ -432,7 +432,7 @@ function MostrarSeccion(idSeccion) {
   } else if (idSeccion == "bloques") {
     if (!bloquesYaCargados) {
       MostrarBloques();
-      bloquesYaCargadoscatalogoYaCargado = true;
+      bloquesYaCargados = true;
     }
   }
 };
