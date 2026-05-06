@@ -1,4 +1,4 @@
-Mila.Modulo({
+Mila.Módulo({
   usa:["$milascript/base","$milascript/archivo",
     "$milascript/pantalla/todo","$milascript/geometria",
     "datos"]
