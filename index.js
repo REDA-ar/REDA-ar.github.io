@@ -27,7 +27,7 @@ Mila.alIniciar(
     const menuSuperior = Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[
       Mila.Pantalla.nuevaImagen({
         ruta:"https://reda.exactas.uba.ar/wp-content/uploads/2025/03/LOGO_Reda_Web-4.png",
-        funcion:volverAlInicio, alto:60, margenExterno:15
+        funcion:volverAlInicio, alto:30, margenExterno:15
       }),
       Mila.Pantalla.nuevoBoton({
         texto:"Carrito", margenExterno:25, colorFondo:"#7bdcb5", margenInterno:10, funcion:verCarrito,
@@ -94,19 +94,19 @@ Mila.alIniciar(
       elementos:[
         Mila.Pantalla.nuevoPanel({cssAdicional:{"font-family":"Nunito", "border-radius":"10px"}, alto:"Minimizar", elementos:[
           Mila.Pantalla.nuevaEtiqueta({texto:"Ejercitación",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
-          Mila.Pantalla.nuevaEtiqueta({texto:"Galería de ejercicios",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
+          Mila.Pantalla.nuevaEtiqueta({texto:"Galería de ejercicios",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectánguloEn__De_x_(10,0,10,10)})
         ], margenExterno:10, colorFondo:"#373737", funcion: verCatalogo}),
         Mila.Pantalla.nuevoPanel({cssAdicional:{"font-family":"Nunito", "border-radius":"10px"}, alto:"Minimizar", elementos:[
           Mila.Pantalla.nuevaEtiqueta({texto:"Visualización",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
-          Mila.Pantalla.nuevaEtiqueta({texto:"Y Datos Personalizados",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
+          Mila.Pantalla.nuevaEtiqueta({texto:"Y Datos Personalizados",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectánguloEn__De_x_(10,0,10,10)})
         ], margenExterno:10, colorFondo:"#373737", destino: "https://reda-ar.github.io/shinys/"}),
         Mila.Pantalla.nuevoPanel({cssAdicional:{"font-family":"Nunito", "border-radius":"10px"}, alto:"Minimizar", elementos:[
           Mila.Pantalla.nuevaEtiqueta({texto:"Bloques",colorTexto:"#7bdcb5", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:10}),
-          Mila.Pantalla.nuevaEtiqueta({texto:"Programar por bloques",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,0,10,10)})
+          Mila.Pantalla.nuevaEtiqueta({texto:"Programar por bloques",colorTexto:"#fff", ancho:"Maximizar", "text-wrap-mode":"wrap", margenExterno:Mila.Geometria.rectánguloEn__De_x_(10,0,10,10)})
         ], margenExterno:10, colorFondo:"#373737", funcion: verBloques})
       ], disposicion:Mila.Pantalla.DisposicionHorizontal
     });
-    const proyectos = Mila.Pantalla.nuevoPanel({margenExterno:Mila.Geometria.rectanguloEn__De_x_(20,0,20,0), elementos: [
+    const proyectos = Mila.Pantalla.nuevoPanel({margenExterno:Mila.Geometria.rectánguloEn__De_x_(20,0,20,0), elementos: [
       Mila.Pantalla.nuevaEtiqueta({texto:"PROYECTOS EN CURSO", colorTexto:"#7bdcb5", ancho:"Maximizar",
         tamanioLetra:20, cssAdicional: {"font-family":"Nunito", "text-wrap-mode":"wrap"}
       }),
@@ -140,9 +140,9 @@ Mila.alIniciar(
 
     // Pantalla catálogo
     const menuBuscador = Mila.Pantalla.nuevoPanel({alto:"Minimizar",elementos:[
-      Mila.Pantalla.nuevaEtiqueta({texto:"Buscar: ", margenExterno:Mila.Geometria.rectanguloEn__De_x_(10,5,5,5)}),
+      Mila.Pantalla.nuevaEtiqueta({texto:"Buscar: ", margenExterno:Mila.Geometria.rectánguloEn__De_x_(10,5,5,5)}),
       Mila.Pantalla.nuevoCampoTexto({margenExterno:3,colorBorde:"#000",grosorBorde:1,margenInterno:2}),
-      Mila.Pantalla.nuevaEtiqueta({texto:"Filtros: ...",margenExterno:Mila.Geometria.rectanguloEn__De_x_(30,5,0,5)})
+      Mila.Pantalla.nuevaEtiqueta({texto:"Filtros: ...",margenExterno:Mila.Geometria.rectánguloEn__De_x_(30,5,0,5)})
     ], disposicion:Mila.Pantalla.DisposicionHorizontal, colorFondo:"#fff"});
     data.panelDatos = Mila.Pantalla.nuevoPanel({cssAdicional:{border:'solid 1px black'}, colorFondo:"#fff"});
     const escritorio = Mila.Pantalla.nuevoPanel({elementos:[
@@ -255,7 +255,7 @@ function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, t
     encabezado.AgregarElemento_(Mila.Pantalla.nuevaEtiqueta({
       texto:tema.nombre,
       tamanioLetra:tamaño,
-      margenExterno:Mila.Geometria.rectanguloEn__De_x_(padding,1,10,1)
+      margenExterno:Mila.Geometria.rectánguloEn__De_x_(padding,1,10,1)
     }));
   }
   if ('contenido' in tema) {
@@ -286,7 +286,7 @@ function AgregarSeccion(tema, elementos, idRecurso=[], padding=paddingInicial, t
 };
 
 function panelRecurso(tema, idRecurso, rutaDescarga) {
-  const margen = Mila.Geometria.rectanguloEn__De_x_(15,0,0,0);
+  const margen = Mila.Geometria.rectánguloEn__De_x_(15,0,0,0);
   const botones = [];
   const elementos = [Mila.Pantalla.nuevoPanel({elementos:botones,
     alto:"Minimizar",
